@@ -1,0 +1,43 @@
+# mysql-post-resources.yaml
+apiVersion: v1
+kind: Pod
+metadata:
+  name: mysql-post-pod
+  labels:
+    app: mysql-post
+spec:
+  containers:
+  - name: mysql-post-db
+    image: mysql:latest
+    env:
+    - name: MYSQL_ROOT_PASSWORD
+      value: "asas1212!"
+    ports:
+    - containerPort: 3306
+    volumeMounts:
+    - name: mysql-client-config
+      mountPath: /etc/mysql/my.cnf
+      subPath: my.cnf
+      readOnly: true
+  volumes:
+  - name: mysql-client-config
+    configMap:
+      name: mysql-client-config
+
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: mysql-post-service
+spec:
+  selector:
+    app: mysql-post
+  ports:
+  - protocol: TCP
+    port: 3305
+    targetPort: 3306
+  type: ClusterIP
+
+
+
